@@ -135,7 +135,7 @@ void dmxRead::print() {
     << tag << " " 
     << fIdx << " " 
     << rIdx << " " 
-    << fId << " " 
+    << getFwdBCidx() << " " 
     << fSeq << " " 
     << rId << " " 
     << " groupSize " << groupSize
@@ -153,7 +153,7 @@ void dmxRead::printFFasta( unsigned i, std::ofstream & fh ) {
     << description << "_" << i << "_1 " 
     << tag << " " 
     << fIdx << " " 
-    << fId
+    << getFwdBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
     << std::endl 
@@ -187,7 +187,7 @@ void dmxRead::printFFastq( unsigned i, std::ofstream & fh ) {
     << description << "_" << i << "_1 " 
     << tag << " " 
     << fIdx << " " 
-    << fId
+    << getFwdBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
     << std::endl 
@@ -263,10 +263,10 @@ bool dmxRead::operator== ( dmxRead & other ) {
   cmp rCmp = EQ;
 
   if ( descriptionCode != REV ) {
-    if ( fId < other.fId ) {
+    if ( getFwdBCidx() < other.getFwdBCidx() ) {
       fCmp = LT;
     }
-    else if ( fId > other.fId ) {
+    else if ( getFwdBCidx() > other.getFwdBCidx() ) {
       fCmp = GT;
     }
   }

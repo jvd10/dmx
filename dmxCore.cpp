@@ -187,18 +187,13 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
 
   using namespace std;
 
-  string fwdMate;
-  string revMate;
-  string fwdMateQual;
-  string revMateQual;
-
   for ( std::vector< fastqPair >::iterator pairIt = (*fastqFeedChunk).begin();
       pairIt != (*fastqFeedChunk).end(); ++pairIt ) {
 
-    fwdMate = (*pairIt).sq1;
-    revMate = (*pairIt).sq2;
-    fwdMateQual = (*pairIt).ql1;
-    revMateQual = (*pairIt).ql2;
+    string & fwdMate = (*pairIt).sq1;
+    string & revMate = (*pairIt).sq2;
+    string & fwdMateQual = (*pairIt).ql1;
+    string & revMateQual = (*pairIt).ql2;
     int r = (*pairIt).num;
 
     dmxMatch fwdMatch = getMatchIndexFinder( fwdMate, _barcodeFinder );
@@ -214,8 +209,8 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
     int revMinIndex = revMatch.index;
 
     barcodeAssignmentType BCA = NO_MATCH;
-    barcode fBC = barcodes[ barcodeNames[ fwdMinIndex ] ];
-    barcode rBC = barcodes[ barcodeNames[ revMinIndex ] ];
+    barcode & fBC = barcodes[ barcodeNames[ fwdMinIndex ] ];
+    barcode & rBC = barcodes[ barcodeNames[ revMinIndex ] ];
 
     if ( fwdMin > fBC.maxBarcodeDistance && revMin > rBC.maxBarcodeDistance ) {
       BCA = NO_MATCH;
@@ -573,7 +568,7 @@ dmxRead * dmx::condenseGroup( std::vector< dmxRead * > & rv ) {
 
   // TODO modify dmxRead struct to record consensus info (reads that go into consensus, etc.)... halfway done...
   dmxRead * r = new dmxRead( rv.front()->descriptionCode, rv.front()->tag, rv.front()->fIdx, rv.front()->rIdx ); 
-  r->fwd( rv.front()->fId, fCon );
+  r->fwd( rv.front()->getFwdBCidx(), fCon );
   r->rev( rv.front()->rId, rCon );
   r->clusterSize = rv.size(); 
   return r;
@@ -658,7 +653,7 @@ void dmx::printFastq( dmxReadSerialVector drv, std::ofstream & fh ) {
 
 void dmx::printFasta( dmxReadSerialVector drv, std::ofstream & fh, std::string barcode ) {
   for ( unsigned i = 0; i < drv.size(); ++i ) {
-    if ( drv[ i ]->fId == barcode ) {
+    if ( drv[ i ]->getFwdBCidx() == barcode ) {
       drv[ i ]->printFFasta( i, fh );
     }
     if ( drv[ i ]->rId == barcode ) {
@@ -669,7 +664,7 @@ void dmx::printFasta( dmxReadSerialVector drv, std::ofstream & fh, std::string b
 
 void dmx::printFastq( dmxReadSerialVector drv, std::ofstream & fh, std::string barcode ) {
   for ( unsigned i = 0; i < drv.size(); ++i ) {
-    if ( drv[ i ]->fId == barcode ) {
+    if ( drv[ i ]->getFwdBCidx() == barcode ) {
       drv[ i ]->printFFastq( i, fh );
     }
     if ( drv[ i ]->rId == barcode ) {
@@ -691,7 +686,7 @@ void dmx::printFasta( dmxReadPriQ & drq, std::ofstream & fh, std::string barcode
   dmxRead * read;
   unsigned i = 0;
   while ( drq.try_pop(read) ) {
-    if ( read->fId == barcode ) {
+    if ( read->getFwdBCidx() == barcode ) {
       read->printFFasta( i, fh );
     }
     if ( read->rId == barcode ) {

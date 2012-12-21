@@ -73,6 +73,7 @@ public:
   void getDinucleotideFreqs( std::vector< double > & kmer );
   void getDinucleotideFreqs( std::string s, std::vector< double > & kmer );
 
+  int getFwdBCidx() { return fwdBCidx; }
   /*
    * Operators
    */
@@ -84,17 +85,15 @@ public:
   void print();
   void printFFasta( unsigned i, std::ofstream & fh );
   void printRFasta( unsigned i, std::ofstream & fh );
-
   void printFFastq( unsigned i, std::ofstream & fh );
   void printRFastq( unsigned i, std::ofstream & fh );
-
   void printFasta( unsigned i, std::ofstream & fh );
   void printFastq( unsigned i, std::ofstream & fh );
 
-//private:
+  //TODO Eventually all data members below should be private TODO//
 
   unsigned fIdx, rIdx;
-  std::string fId, rId, tag, fSeq, rSeq;
+  std::string tag, fSeq, rSeq;
   std::string fQual, rQual;
   barcodeAssignmentType descriptionCode;
   /* 
@@ -104,6 +103,11 @@ public:
    */
   unsigned groupSize, clusterSize;
 
+  std::string rId;
+
+private:
+
+  unsigned char fwdBCidx;
 };
 
 struct dmxReadCompare {
@@ -117,8 +121,8 @@ struct dmxReadCompare {
     cmp fCmp = EQ;
     cmp rCmp = EQ;
     if ( x->descriptionCode != REV ) {
-      if ( x->fId < y->fId ) { fCmp = LT; }
-      else if ( x->fId > y->fId ) { fCmp = GT; }
+      if ( x->getFwdBCidx() < y->getFwdBCidx() ) { fCmp = LT; }
+      else if ( x->getFwdBCidx() > y->getFwdBCidx() ) { fCmp = GT; }
     }
     if ( x->descriptionCode != FWD ) {
       if ( x->rId < y->rId ) { rCmp = LT; }
