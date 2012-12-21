@@ -234,7 +234,7 @@ void dmxRead::getDinucleotideFreqs( std::vector< double > & kmer ) {
   kmer.insert( kmer.end(), rkmer.begin(), rkmer.end() );
 }
 
-inline void dmxRead::getDinucleotideFreqs( std::string s, std::vector< double > & kmer ) {
+void dmxRead::getDinucleotideFreqs( std::string s, std::vector< double > & kmer ) {
 
   std::map< std::string, int > counts;
   counts["AA"]=0;counts["AC"]=0;counts["AG"]=0;counts["AT"]=0;

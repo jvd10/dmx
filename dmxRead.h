@@ -45,30 +45,42 @@
 
 enum barcodeAssignmentType { BOTH, FWD, REV, NO_MATCH, MISMATCH } ;
 
-struct dmxRead {
+class dmxRead {
 
-  std::string fId, rId, tag, fSeq, rSeq;
-  std::string fQual, rQual;
-  unsigned fIdx, rIdx;
-  barcodeAssignmentType descriptionCode;
-  // groupSize is the number of reads that share barcode, random counter and random primer
-  // cluster size is the size of each of the clusters (based on remaining sequence) identified
-  // in the alignment of the group and then clustered based on kmer distribution
-  unsigned groupSize, clusterSize;
+public:
 
+  /*
+   * Constructors, Destructor, clone methods
+   */
   dmxRead();
   dmxRead * newClone();
   dmxRead( barcodeAssignmentType _descriptionCode, std::string _tag, unsigned _fIdx, unsigned _rIdx );
-   
+ 
+  /*
+   * Initialization/Set methods
+   */
   void fwd( std::string _fId, std::string _fSeq );
   void rev( std::string _rId, std::string _rSeq );
 
   void fwd( std::string _fId, std::string _fSeq, std::string _fQual );
   void rev( std::string _rId, std::string _rSeq, std::string _rQual );
- 
+   
+  /*
+   * Access/Get methods
+   */
   std::string getDescription();
   std::string getShortDescription();
+  void getDinucleotideFreqs( std::vector< double > & kmer );
+  void getDinucleotideFreqs( std::string s, std::vector< double > & kmer );
 
+  /*
+   * Operators
+   */
+  bool operator== ( dmxRead & other );
+
+  /*
+   * Printing and debugging
+   */
   void print();
   void printFFasta( unsigned i, std::ofstream & fh );
   void printRFasta( unsigned i, std::ofstream & fh );
@@ -79,11 +91,18 @@ struct dmxRead {
   void printFasta( unsigned i, std::ofstream & fh );
   void printFastq( unsigned i, std::ofstream & fh );
 
-  void getDinucleotideFreqs( std::vector< double > & kmer );
+//private:
 
-  inline void getDinucleotideFreqs( std::string s, std::vector< double > & kmer );
-
-  bool operator== ( dmxRead & other );
+  unsigned fIdx, rIdx;
+  std::string fId, rId, tag, fSeq, rSeq;
+  std::string fQual, rQual;
+  barcodeAssignmentType descriptionCode;
+  /* 
+   * groupSize is the number of reads that share barcode, random counter and random primer 
+   * cluster size is the size of each of the clusters (based on remaining sequence) identified
+   * in the alignment of the group and then clustered based on kmer distribution
+   */
+  unsigned groupSize, clusterSize;
 
 };
 
@@ -95,27 +114,16 @@ struct dmxReadCompare {
     if (x->descriptionCode != y->descriptionCode) {
       std::cout << "Trying to compare " << x->descriptionCode << " to " << y->descriptionCode << " in read sort." << std::endl;
     }
-
     cmp fCmp = EQ;
     cmp rCmp = EQ;
-
     if ( x->descriptionCode != REV ) {
-      if ( x->fId < y->fId ) {
-        fCmp = LT;
-      }
-      else if ( x->fId > y->fId ) {
-        fCmp = GT;
-      }
+      if ( x->fId < y->fId ) { fCmp = LT; }
+      else if ( x->fId > y->fId ) { fCmp = GT; }
     }
     if ( x->descriptionCode != FWD ) {
-      if ( x->rId < y->rId ) {
-        rCmp = LT;
-      }
-      else if ( x->rId > y->rId ) {
-        rCmp = GT;
-      }
+      if ( x->rId < y->rId ) { rCmp = LT; }
+      else if ( x->rId > y->rId ) { rCmp = GT; }
     }
-
     switch (fCmp) {
       case LT:
         return true;
@@ -133,7 +141,6 @@ struct dmxReadCompare {
         return false;
     }
   }
-
 };
 
 
