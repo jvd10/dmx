@@ -66,26 +66,26 @@ dmxRead::dmxRead( barcodeAssignmentType _descriptionCode, std::string _tag, unsi
   clusterSize = 0;
 }
 
-void dmxRead::fwd( std::string _fId, std::string _fSeq ) {
-  fId = _fId;
+void dmxRead::fwd( int _fBCidx, std::string _fSeq ) {
+  fBCidx = _fBCidx;
   fSeq = _fSeq;
   fQual.assign( _fSeq.length(), 'J' );
 }
 
-void dmxRead::rev( std::string _rId, std::string _rSeq ) {
-  rId = _rId;
+void dmxRead::rev( int _rBCidx, std::string _rSeq ) {
+  rBCidx = _rBCidx;
   rSeq = _rSeq;
   rQual.assign( _rSeq.length(), 'J' );
 }
 
-void dmxRead::fwd( std::string _fId, std::string _fSeq, std::string _fQual ) {
-  fId = _fId;
+void dmxRead::fwd( int _fBCidx, std::string _fSeq, std::string _fQual ) {
+  fBCidx = _fBCidx;
   fSeq = _fSeq;
   fQual = _fQual;
 }
 
-void dmxRead::rev( std::string _rId, std::string _rSeq, std::string _rQual ) {
-  rId = _rId;
+void dmxRead::rev( int _rBCidx, std::string _rSeq, std::string _rQual ) {
+  rBCidx = _rBCidx;
   rSeq = _rSeq;
   rQual = _rQual;
 }

@@ -215,8 +215,8 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
     if ( fwdMin > fBC.maxBarcodeDistance && revMin > rBC.maxBarcodeDistance ) {
       BCA = NO_MATCH;
       dmxRead * read = new dmxRead( NO_MATCH, "", r, r );
-      read->fwd( "NONE", fwdMate, fwdMateQual );
-      read->rev( "NONE", revMate, revMateQual );
+      read->fwd( -1, fwdMate, fwdMateQual );
+      read->rev( -1, revMate, revMateQual );
       nonBarcode.push( read );
     }
     else if (fwdMinIndex == revMinIndex) { 
@@ -232,8 +232,8 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             revMate.substr( rBC.randPrimerStart, rBC.randPrimerLength ) +
             revMate.substr( rBC.seqStart, seqTagLength ),
             r, r );
-        read->fwd( barcodeNames[ fwdMinIndex ], fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
-        read->rev( barcodeNames[ revMinIndex ], revMate.substr( rBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( rBC.seqStart, revMate.length() - rBC.seqStart ) );
+        read->fwd( fwdMinIndex, fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
+        read->rev( revMinIndex, revMate.substr( rBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( rBC.seqStart, revMate.length() - rBC.seqStart ) );
         conBarcode.push( read );
       }
     }
@@ -247,8 +247,8 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             fwdMate.substr( fBC.randPrimerStart, fBC.randPrimerLength ) +
             fwdMate.substr( fBC.seqStart, seqTagLength ), 
             r, r );
-        read->fwd( barcodeNames[ fwdMinIndex ], fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
-        read->rev( "NONE", revMate, revMateQual );
+        read->fwd( fwdMinIndex, fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
+        read->rev( -1, revMate, revMateQual );
         fwdBarcode.push( read );
       }
       else if (fwdMin > fBC.maxBarcodeDistance && 
@@ -260,8 +260,8 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             revMate.substr( rBC.randPrimerStart, rBC.randPrimerLength ) +
             revMate.substr( rBC.seqStart, seqTagLength ),
             r, r );
-        read->fwd( "NONE", fwdMate, fwdMateQual );
-        read->rev( barcodeNames[ revMinIndex ], revMate.substr( rBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( rBC.seqStart, revMate.length() - rBC.seqStart ) );
+        read->fwd( -1, fwdMate, fwdMateQual );
+        read->rev( revMinIndex, revMate.substr( rBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( rBC.seqStart, revMate.length() - rBC.seqStart ) );
         revBarcode.push( read );
       }
       else if (fwdMin <= fBC.maxBarcodeDistance && 
@@ -276,8 +276,8 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             revMate.substr( rBC.randPrimerStart, rBC.randPrimerLength ) +
             revMate.substr( rBC.seqStart, seqTagLength ),
             r, r );       
-        read->fwd( barcodeNames[ fwdMinIndex ], fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
-        read->rev( barcodeNames[ revMinIndex ], revMate.substr( fBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( fBC.seqStart, revMate.length() - rBC.seqStart ) );
+        read->fwd( fwdMinIndex, fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
+        read->rev( revMinIndex, revMate.substr( fBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( fBC.seqStart, revMate.length() - rBC.seqStart ) );
         disBarcode.push( read );
       }
     }
@@ -569,7 +569,7 @@ dmxRead * dmx::condenseGroup( std::vector< dmxRead * > & rv ) {
   // TODO modify dmxRead struct to record consensus info (reads that go into consensus, etc.)... halfway done...
   dmxRead * r = new dmxRead( rv.front()->descriptionCode, rv.front()->tag, rv.front()->fIdx, rv.front()->rIdx ); 
   r->fwd( rv.front()->getFwdBCidx(), fCon );
-  r->rev( rv.front()->rId, rCon );
+  r->rev( rv.front()->getRevBCidx(), rCon );
   r->clusterSize = rv.size(); 
   return r;
 }

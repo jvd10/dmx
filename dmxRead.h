@@ -59,11 +59,11 @@ public:
   /*
    * Initialization/Set methods
    */
-  void fwd( std::string _fId, std::string _fSeq );
-  void rev( std::string _rId, std::string _rSeq );
+  void fwd( int _fBCidx, std::string _fSeq );
+  void rev( int _rBCidx, std::string _rSeq );
 
-  void fwd( std::string _fId, std::string _fSeq, std::string _fQual );
-  void rev( std::string _rId, std::string _rSeq, std::string _rQual );
+  void fwd( int _fBCidx, std::string _fSeq, std::string _fQual );
+  void rev( int _rBCidx, std::string _rSeq, std::string _rQual );
    
   /*
    * Access/Get methods
@@ -73,7 +73,9 @@ public:
   void getDinucleotideFreqs( std::vector< double > & kmer );
   void getDinucleotideFreqs( std::string s, std::vector< double > & kmer );
 
-  int getFwdBCidx() { return fwdBCidx; }
+  int getFwdBCidx() { return fBCidx; }
+  int getRevBCidx() { return rBCidx; }
+
   /*
    * Operators
    */
@@ -103,11 +105,13 @@ public:
    */
   unsigned groupSize, clusterSize;
 
-  std::string rId;
+  //std::string fId, rId;
 
 private:
 
-  unsigned char fwdBCidx;
+  short int fBCidx;
+  short int rBCidx;
+
 };
 
 struct dmxReadCompare {
@@ -125,8 +129,8 @@ struct dmxReadCompare {
       else if ( x->getFwdBCidx() > y->getFwdBCidx() ) { fCmp = GT; }
     }
     if ( x->descriptionCode != FWD ) {
-      if ( x->rId < y->rId ) { rCmp = LT; }
-      else if ( x->rId > y->rId ) { rCmp = GT; }
+      if ( x->getRevBCidx() < y->getRevBCidx() ) { rCmp = LT; }
+      else if ( x->getRevBCidx() > y->getRevBCidx() ) { rCmp = GT; }
     }
     switch (fCmp) {
       case LT:
