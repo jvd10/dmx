@@ -651,23 +651,23 @@ void dmx::printFastq( dmxReadSerialVector drv, std::ofstream & fh ) {
   }
 }
 
-void dmx::printFasta( dmxReadSerialVector drv, std::ofstream & fh, std::string barcode ) {
+void dmx::printFasta( dmxReadSerialVector drv, std::ofstream & fh, int barcode_index ) {
   for ( unsigned i = 0; i < drv.size(); ++i ) {
-    if ( drv[ i ]->getFwdBCidx() == barcode ) {
+    if ( drv[ i ]->getFwdBCidx() == barcode_index ) {
       drv[ i ]->printFFasta( i, fh );
     }
-    if ( drv[ i ]->rId == barcode ) {
+    if ( drv[ i ]->getRevBCidx() == barcode_index ) {
       drv[ i ]->printRFasta( i, fh );
     }
   }
 }
 
-void dmx::printFastq( dmxReadSerialVector drv, std::ofstream & fh, std::string barcode ) {
+void dmx::printFastq( dmxReadSerialVector drv, std::ofstream & fh, int barcode_index ) {
   for ( unsigned i = 0; i < drv.size(); ++i ) {
-    if ( drv[ i ]->getFwdBCidx() == barcode ) {
+    if ( drv[ i ]->getFwdBCidx() == barcode_index ) {
       drv[ i ]->printFFastq( i, fh );
     }
-    if ( drv[ i ]->rId == barcode ) {
+    if ( drv[ i ]->getRevBCidx() == barcode_index ) {
       drv[ i ]->printRFastq( i, fh );
     }
   }
@@ -682,14 +682,14 @@ void dmx::printFasta( dmxReadPriQ & drq, std::ofstream & fh ) {
   }
 }
 
-void dmx::printFasta( dmxReadPriQ & drq, std::ofstream & fh, std::string barcode ) {
+void dmx::printFasta( dmxReadPriQ & drq, std::ofstream & fh, int barcode_index ) {
   dmxRead * read;
   unsigned i = 0;
   while ( drq.try_pop(read) ) {
-    if ( read->getFwdBCidx() == barcode ) {
+    if ( read->getFwdBCidx() == barcode_index ) {
       read->printFFasta( i, fh );
     }
-    if ( read->rId == barcode ) {
+    if ( read->getRevBCidx() == barcode_index ) {
       read->printRFasta( i, fh );
     }
     ++i;
@@ -722,16 +722,6 @@ void dmx::printAllFasta( std::string goodFastaOutfile ) {
   fh.close();
 }
 
-void dmx::printPerBarcodeFasta( std::string outputPrefix ) {
-
-  perBarcodePrintFunctor bcPrinter;
-
-  bcPrinter.d = this;
-  bcPrinter.outputPrefix = outputPrefix;
-
-  parallel_do( barcodeNames.begin(), barcodeNames.end(), bcPrinter );
-
-}
 
 
 

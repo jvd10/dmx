@@ -43,8 +43,8 @@ dmxRead::dmxRead() {
 
 dmxRead * dmxRead::newClone() {
   dmxRead * clone = new dmxRead();
-  clone->fId = fId;
-  clone->rId = rId;
+  clone->fBCidx = fBCidx;
+  clone->rBCidx = rBCidx;
   clone->tag = tag;
   clone->fSeq = fSeq;
   clone->rSeq = rSeq;
@@ -137,7 +137,7 @@ void dmxRead::print() {
     << rIdx << " " 
     << getFwdBCidx() << " " 
     << fSeq << " " 
-    << rId << " " 
+    << getFwdBCidx() << " " 
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
     << rSeq 
@@ -170,7 +170,7 @@ void dmxRead::printRFasta( unsigned i, std::ofstream & fh ) {
     << description << "_" << i << "_2 " 
     << tag << " " 
     << rIdx << " " 
-    << rId
+    << getRevBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
     << std::endl
@@ -206,7 +206,7 @@ void dmxRead::printRFastq( unsigned i, std::ofstream & fh ) {
     << description << "_" << i << "_2 " 
     << tag << " " 
     << rIdx << " " 
-    << rId
+    << getRevBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
     << std::endl
@@ -271,10 +271,10 @@ bool dmxRead::operator== ( dmxRead & other ) {
     }
   }
   if ( descriptionCode != FWD ) {
-    if ( rId < other.rId ) {
+    if ( getRevBCidx() < other.getRevBCidx() ) {
       rCmp = LT;
     }
-    else if ( rId > other.rId ) {
+    else if ( getRevBCidx() > other.getRevBCidx() ) {
       rCmp = GT;
     }
   }

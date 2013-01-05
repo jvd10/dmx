@@ -126,12 +126,12 @@ class dmx {
     void printFasta( dmxReadSerialVector, std::ofstream & fh );
     void printFastq( dmxReadSerialVector, std::ofstream & fh );
 
-    void printFastq( dmxReadSerialVector, std::ofstream & fh, std::string barcodeString );
+    void printFastq( dmxReadSerialVector, std::ofstream & fh, int barcode_index );
 
-    void printFasta( dmxReadSerialVector, std::ofstream & fh, std::string barcodeString );
+    void printFasta( dmxReadSerialVector, std::ofstream & fh, int barcode_index );
 
     void printFasta( dmxReadPriQ&, std::ofstream & fh );
-    void printFasta( dmxReadPriQ&, std::ofstream & fh, std::string barcodeString );
+    void printFasta( dmxReadPriQ&, std::ofstream & fh, int barcode_index );
 
     void printGoodFasta( std::string filename );
     void printGoodFastq( std::string filename );
@@ -257,30 +257,6 @@ struct digestFunctor2 {
   }
 };
 
-struct perBarcodePrintFunctor {
-
-  std::string outputPrefix;
-  dmx * d;
-
-  void operator()( std::string barcodeName ) const {
-
-    std::string outfileName = outputPrefix + "." + barcodeName + ".fasta";
-
-    std::ofstream fh ( outfileName.c_str() );
-    d->printFasta( d->conBarcode, fh, barcodeName );
-    d->printFasta( d->fwdBarcode, fh, barcodeName );
-    d->printFasta( d->revBarcode, fh, barcodeName );
-
-    fh.close();
-
-    //std::cout << "wrote " << barcodeName << " to " << outfileName << std::endl;
-
-  }
-
-
-
-
-};
 
 #endif  // #ifndef SANDBOX_JVD_APPS_DMX_DMXCORE_H_
 
