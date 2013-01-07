@@ -213,16 +213,6 @@ class dmx {
     inline std::string computeConsensus( std::string & matrix, size_t nrow );
 };
 
-struct digestFunctor {
-  dmx * d;
-  void operator()( const blocked_range<int>& range ) const {
-    barcodeStringSetIndexFinderType _barcodeFinder( d->barcodeFinder );
-    for ( int i = range.begin(); i < range.end(); ++i ) {
-      d->digest( & _barcodeFinder, d->fastqFeed[ i ] ); 
-    }
-  }
-};
-
 struct digestFunctor2 {
 
   typedef std::vector< fastqPair > * argument_type;
