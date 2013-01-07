@@ -156,9 +156,6 @@ class dmx {
     MultiSeqFile pair1File;
     MultiSeqFile pair2File;
 
-    AutoSeqFormat format1;
-    AutoSeqFormat format2;
-
     std::map< std::string, barcode > barcodes;
     std::vector< std::string > barcodeNames;
 
@@ -211,14 +208,14 @@ class dmx {
     dmxRead * condenseGroup( std::vector< dmxRead * > & rv );
     void test_consensus();
     inline std::string computeConsensus( std::string & matrix, size_t nrow );
-};
+  };
 
-struct digestFunctor2 {
+  struct digestFunctor2 {
 
-  typedef std::vector< fastqPair > * argument_type;
+    typedef std::vector< fastqPair > * argument_type;
 
-  dmx * d;
-  void operator()( argument_type at, parallel_do_feeder< argument_type >& feeder ) const {
+    dmx * d;
+    void operator()( argument_type at, parallel_do_feeder< argument_type >& feeder ) const {
 
     barcodeStringSetIndexFinderType _barcodeFinder( d->barcodeFinder );
    
@@ -241,8 +238,6 @@ struct digestFunctor2 {
     d->digest( & _barcodeFinder, at ); 
     at->clear();
     delete at;
-    
-    
   }
 };
 
