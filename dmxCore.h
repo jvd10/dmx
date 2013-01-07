@@ -111,7 +111,6 @@ class dmx {
     void digest();
     void digest(barcodeStringSetIndexFinderType * _barcodeFinder, std::vector< fastqPair > * fastqFeedChunk);
 
-    void parallelDigest();
     void parallelDigest2();
 
     void printBarcodeResults( dmxReadVector resultVector );

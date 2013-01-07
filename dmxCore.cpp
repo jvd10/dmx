@@ -284,29 +284,6 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
   }
 }
 
-void dmx::parallelDigest() {
-  digestFunctor df;
-  df.d = this;
-
-  std::vector< fastqPair > * chunk;
-
-  while ( !(fastqChunks.empty()) ) { 
-    if ( fastqChunks.try_pop( chunk ) ) {
-      fastqFeed.push_back( chunk );
-      chunk = new std::vector< fastqPair >();
-    }
-  }
-
-  if ( fastqFeed.size() > 4 ) {
-    parallel_for( blocked_range< int >( 0, fastqFeed.size() ), df );
-  }
-  else {
-    for ( size_t i = 0; i < fastqFeed.size(); ++i ) {
-      digest( & barcodeFinder, fastqFeed[ i ] );
-    }
-  }
-}
-
 void dmx::parallelDigest2() {
   digestFunctor2 df;
   df.d = this;
