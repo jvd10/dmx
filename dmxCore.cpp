@@ -88,9 +88,9 @@ void dmx::read2FilePairedFastq( char * pair1FileName, char * pair2FileName ) {
   while ( !dmxio->isEmpty() ) {
     if ( !dmxio->getline( pair1FileName, line1 ) ) breaker = true;
     if ( !dmxio->getline( pair2FileName, line2 ) ) breaker = true;
+    //printf( "l = %d, n = %d, n_c = %d,  %s , %s\n", l, n, n_c, line1.c_str(), line2.c_str() );
     if (breaker) { break; }
     l++;
-    //printf( "l = %d, n = %d, n_c = %d,  %s , %s\n", l, n, n_c, line1.c_str(), line2.c_str() );
     switch ( l ) {
       case 1:
         fqp.id1 = line1;
@@ -369,25 +369,25 @@ void dmx::convertPriorityQueuesToVectors() {
 #pragma omp section
     {
       convertPriorityQueueToVector( revBarcode, revBarcodeSerVec );  
-      printf( "REV %lu\n", fwdBarcodeSerVec.size() );
+      printf( "REV %lu\n", revBarcodeSerVec.size() );
 
     }
 #pragma omp section
     {
       convertPriorityQueueToVector( conBarcode, conBarcodeSerVec );  
-      printf( "CON %lu\n", fwdBarcodeSerVec.size() );
+      printf( "CON %lu\n", conBarcodeSerVec.size() );
 
     }
 #pragma omp section
     {
       convertPriorityQueueToVector( disBarcode, disBarcodeSerVec );  
-      printf( "DIS %lu\n", fwdBarcodeSerVec.size() );
+      printf( "DIS %lu\n", disBarcodeSerVec.size() );
 
     }
 #pragma omp section
     {
       convertPriorityQueueToVector( nonBarcode, nonBarcodeSerVec );  
-      printf( "NON %lu\n", fwdBarcodeSerVec.size() );
+      printf( "NON %lu\n", nonBarcodeSerVec.size() );
 
     }
   }
