@@ -281,6 +281,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
         disBarcode.push( read );
       }
     }
+    (*pairIt).reset();
   }
 }
 
@@ -308,9 +309,12 @@ void dmx::parallelDigest2() {
   while ( !finishedReading ) { 
     parallel_do( fastqFeed.begin(), fastqFeed.end(), df );
   } // TODO: clean this up ...
+  
   fastqFeed.clear();
   fastqFeed.shrink_to_fit();
+
   fastqChunks.clear();
+
   spoon = true;
   // TODO these should be elsewhere...
   convertPriorityQueuesToVectors();
@@ -390,10 +394,12 @@ void dmx::groupReduce( dmxReadSerialVector * drsv, dmxReadPriQ * drpq ) {
   for ( dmxReadSerialVector::iterator it = drsv->begin(); it != drsv->end(); ++it ) {
     if ( stack->empty() ) {
       stack->push_back( *it );
+      (*it) = NULL;
     }
     else {
       if ( *(*it) == *( stack->back() ) ) {
         stack->push_back( *it );
+        (*it) = NULL;
       }
       else {
         groupReduceFeed.push_back( stack );
@@ -417,21 +423,21 @@ void dmx::groupReduceFunctor::operator() ( dmxReadSerialVector * r, parallel_do_
     dmxReadSerialVector * stack = new dmxReadSerialVector();
 
     for ( dmxReadSerialVector::iterator it = drsv->begin(); it != drsv->end(); ++it ) {
-      if ( stack->empty() ) {
-        stack->push_back( *it );
-      }
-      else {
-        if ( *(*it) == *( stack->back() ) ) {
+      if ( (*it) != NULL ) {
+        if ( stack->empty() ) {
           stack->push_back( *it );
         }
         else {
-          feeder.add( stack );
-          stack = new dmxReadSerialVector();
+          if ( *(*it) == *( stack->back() ) ) {
+            stack->push_back( *it );
+          }
+          else {
+            feeder.add( stack );
+            stack = new dmxReadSerialVector();
+          }
         }
       }
     }
-
-
   }
 
   // executed by all tasks, including, eventually, the feeder:
@@ -458,10 +464,11 @@ void dmx::groupReduceFunctor::operator() ( dmxReadSerialVector * r, parallel_do_
       processedRead = r->front()->newClone();
     }
 
-    processedRead->groupSize = r->size();
+    processedRead->setGroupSize( r->size() );
     //std::cout << &it << " numclusters: " << clusterMap.size() << " groupSize: " << r->size() << " clusterSize: " << (*it).second.size() << std::endl;
     drpq->push( processedRead );
     for ( dmxReadSerialVector::iterator i = r->begin(); i != r->end(); ++i ) {
+      delete (*i);
       (*i) = NULL;
     }
   }
@@ -535,10 +542,10 @@ dmxRead * dmx::condenseGroup( std::vector< dmxRead * > & rv ) {
   std::string rCon = computeConsensus( rMatrix, rv.size() );
 
   // TODO modify dmxRead struct to record consensus info (reads that go into consensus, etc.)... halfway done...
-  dmxRead * r = new dmxRead( rv.front()->descriptionCode, rv.front()->tag, rv.front()->get_readID() ); 
+  dmxRead * r = new dmxRead( rv.front()->getDescriptionCode(), rv.front()->tag, rv.front()->get_readID() ); 
   r->fwd( rv.front()->getFwdBCidx(), fCon );
   r->rev( rv.front()->getRevBCidx(), rCon );
-  r->clusterSize = rv.size(); 
+  r->setClusterSize( rv.size() ); 
   return r;
 }
 

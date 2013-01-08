@@ -44,7 +44,17 @@
 #include <fstream>
 #include <stdint.h>
 
-enum barcodeAssignmentType { BOTH, FWD, REV, NO_MATCH, MISMATCH } ;
+//#include <snappy.h>
+
+//enum barcodeAssignmentType { BOTH, FWD, REV, NO_MATCH, MISMATCH } ;
+
+#define BOTH 'B'
+#define FWD 'F'
+#define REV 'R'
+#define NO_MATCH 'N'
+#define MISMATCH 'M'
+
+typedef char barcodeAssignmentType;
 
 class dmxRead {
 
@@ -52,6 +62,8 @@ private:
 
   short int fBCidx;
   short int rBCidx;
+
+  barcodeAssignmentType descriptionCode;
 
   unsigned readID;
   /* 
@@ -82,13 +94,19 @@ public:
   /*
    * Access/Get methods
    */
+  barcodeAssignmentType getDescriptionCode() { return descriptionCode; }
   std::string getDescription();
   std::string getShortDescription();
+
   void getDinucleotideFreqs( std::vector< double > & kmer );
   void getDinucleotideFreqs( std::string s, std::vector< double > & kmer );
 
   int getFwdBCidx() { return fBCidx; }
   int getRevBCidx() { return rBCidx; }
+  int get_readID() { return readID; }
+
+  void setGroupSize( int _groupSize ) { groupSize = _groupSize; }
+  void setClusterSize( int _clusterSize ) { clusterSize = _clusterSize; }
 
   /*
    * Operators
@@ -108,12 +126,9 @@ public:
 
   //TODO Eventually all data members below should be private TODO//
 
-  std::string tag, fSeq, rSeq;
+  std::string tag;
+  std::string fSeq, rSeq;
   std::string fQual, rQual;
-  barcodeAssignmentType descriptionCode;
-
-  int get_readID() { return readID; }
-
 };
 
 struct dmxReadCompare {
@@ -121,16 +136,16 @@ struct dmxReadCompare {
   enum cmp { LT, EQ, GT };
 
   bool operator() ( dmxRead * x, dmxRead * y ) const {
-    if (x->descriptionCode != y->descriptionCode) {
-      std::cout << "Trying to compare " << x->descriptionCode << " to " << y->descriptionCode << " in read sort." << std::endl;
+    if ( x->getDescriptionCode() != y->getDescriptionCode() ) {
+      std::cout << "Trying to compare " << x->getDescriptionCode() << " to " << y->getDescriptionCode() << " in read sort." << std::endl;
     }
     cmp fCmp = EQ;
     cmp rCmp = EQ;
-    if ( x->descriptionCode != REV ) {
+    if ( x->getDescriptionCode() != REV ) {
       if ( x->getFwdBCidx() < y->getFwdBCidx() ) { fCmp = LT; }
       else if ( x->getFwdBCidx() > y->getFwdBCidx() ) { fCmp = GT; }
     }
-    if ( x->descriptionCode != FWD ) {
+    if ( x->getDescriptionCode() != FWD ) {
       if ( x->getRevBCidx() < y->getRevBCidx() ) { rCmp = LT; }
       else if ( x->getRevBCidx() > y->getRevBCidx() ) { rCmp = GT; }
     }

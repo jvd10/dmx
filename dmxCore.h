@@ -80,6 +80,14 @@ using namespace tbb;
 struct fastqPair {
   std::string id1, id2, sq1, sq2, ql1, ql2;
   unsigned num;
+  void reset() {
+    id1.erase();
+    id2.erase();
+    sq1.erase();
+    sq2.erase();
+    ql1.erase();
+    ql2.erase();
+  }
 };
 
 struct dmxMatch {
