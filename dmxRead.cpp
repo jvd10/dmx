@@ -50,18 +50,19 @@ dmxRead * dmxRead::newClone() {
   clone->rSeq = rSeq;
   clone->fQual = fQual;
   clone->rQual = rQual;
-  clone->fIdx = fIdx;
+  
+  clone->readID = readID;
+
   clone->descriptionCode = descriptionCode;
   clone->groupSize = groupSize;
   clone->clusterSize = clusterSize;
   return clone;
 }
 
-dmxRead::dmxRead( barcodeAssignmentType _descriptionCode, std::string _tag, unsigned _fIdx, unsigned _rIdx ) {
+dmxRead::dmxRead( barcodeAssignmentType _descriptionCode, std::string _tag, unsigned _readID ) {
   descriptionCode = _descriptionCode;
   tag = _tag;
-  fIdx = _fIdx;
-  rIdx = _rIdx;
+  readID = _readID;
   groupSize = 0;
   clusterSize = 0;
 }
@@ -133,8 +134,7 @@ void dmxRead::print() {
   std::cout 
     << description << " " 
     << tag << " " 
-    << fIdx << " " 
-    << rIdx << " " 
+    << readID << " " 
     << getFwdBCidx() << " " 
     << fSeq << " " 
     << getFwdBCidx() << " " 
@@ -152,7 +152,7 @@ void dmxRead::printFFasta( unsigned i, std::ofstream & fh ) {
     << ">"
     << description << "_" << i << "_1 " 
     << tag << " " 
-    << fIdx << " " 
+    << readID << " " 
     << getFwdBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
@@ -169,7 +169,7 @@ void dmxRead::printRFasta( unsigned i, std::ofstream & fh ) {
     << ">"
     << description << "_" << i << "_2 " 
     << tag << " " 
-    << rIdx << " " 
+    << readID << " " 
     << getRevBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
@@ -186,7 +186,7 @@ void dmxRead::printFFastq( unsigned i, std::ofstream & fh ) {
     << "@"
     << description << "_" << i << "_1 " 
     << tag << " " 
-    << fIdx << " " 
+    << readID << " " 
     << getFwdBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize
@@ -205,7 +205,7 @@ void dmxRead::printRFastq( unsigned i, std::ofstream & fh ) {
     << "@"
     << description << "_" << i << "_2 " 
     << tag << " " 
-    << rIdx << " " 
+    << readID << " " 
     << getRevBCidx()
     << " groupSize " << groupSize
     << " clusterSize " << clusterSize

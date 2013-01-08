@@ -207,7 +207,7 @@ class dmx {
     void getClusters( std::map< int, dmxReadSerialVector > & clusterMap, dmxReadSerialVector * rv );
     dmxRead * condenseGroup( std::vector< dmxRead * > & rv );
     void test_consensus();
-    inline std::string computeConsensus( std::string & matrix, size_t nrow );
+    std::string computeConsensus( std::string & matrix, size_t nrow );
   };
 
   struct digestFunctor2 {
@@ -220,8 +220,7 @@ class dmx {
     barcodeStringSetIndexFinderType _barcodeFinder( d->barcodeFinder );
    
     if ( d->spoon.compare_and_swap( false, true ) ) {
-      // I have the spoon, so I must be the feeder...
-      // following loop only entered by the feeder
+      // I have the spoon, so I must be the feeder; following loop only entered by the feeder:
       while ( !(d->finishedReading) ) {
         int numChunks = d->fastqChunks.unsafe_size();
         for ( int i = 0; i < numChunks; ++i ) {

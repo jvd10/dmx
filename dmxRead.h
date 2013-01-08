@@ -42,6 +42,7 @@
 #include <map>
 #include <sstream>
 #include <fstream>
+#include <stdint.h>
 
 enum barcodeAssignmentType { BOTH, FWD, REV, NO_MATCH, MISMATCH } ;
 
@@ -54,7 +55,7 @@ public:
    */
   dmxRead();
   dmxRead * newClone();
-  dmxRead( barcodeAssignmentType _descriptionCode, std::string _tag, unsigned _fIdx, unsigned _rIdx );
+  dmxRead( barcodeAssignmentType _descriptionCode, std::string _tag, unsigned _readID );
  
   /*
    * Initialization/Set methods
@@ -94,7 +95,6 @@ public:
 
   //TODO Eventually all data members below should be private TODO//
 
-  unsigned fIdx, rIdx;
   std::string tag, fSeq, rSeq;
   std::string fQual, rQual;
   barcodeAssignmentType descriptionCode;
@@ -103,15 +103,16 @@ public:
    * cluster size is the size of each of the clusters (based on remaining sequence) identified
    * in the alignment of the group and then clustered based on kmer distribution
    */
-  unsigned groupSize, clusterSize;
+  uint16_t groupSize, clusterSize;
 
-  //std::string fId, rId;
+  int get_readID() { return readID; }
 
 private:
 
   short int fBCidx;
   short int rBCidx;
 
+  unsigned readID;
 };
 
 struct dmxReadCompare {

@@ -214,7 +214,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
 
     if ( fwdMin > fBC.maxBarcodeDistance && revMin > rBC.maxBarcodeDistance ) {
       BCA = NO_MATCH;
-      dmxRead * read = new dmxRead( NO_MATCH, "", r, r );
+      dmxRead * read = new dmxRead( NO_MATCH, "", r );
       read->fwd( -1, fwdMate, fwdMateQual );
       read->rev( -1, revMate, revMateQual );
       nonBarcode.push( read );
@@ -231,7 +231,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             revMate.substr( rBC.randTagStart, rBC.randTagLength ) +
             revMate.substr( rBC.randPrimerStart, rBC.randPrimerLength ) +
             revMate.substr( rBC.seqStart, seqTagLength ),
-            r, r );
+            r );
         read->fwd( fwdMinIndex, fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
         read->rev( revMinIndex, revMate.substr( rBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( rBC.seqStart, revMate.length() - rBC.seqStart ) );
         conBarcode.push( read );
@@ -246,7 +246,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             fwdMate.substr( fBC.randTagStart, fBC.randTagLength ) +
             fwdMate.substr( fBC.randPrimerStart, fBC.randPrimerLength ) +
             fwdMate.substr( fBC.seqStart, seqTagLength ), 
-            r, r );
+            r );
         read->fwd( fwdMinIndex, fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
         read->rev( -1, revMate, revMateQual );
         fwdBarcode.push( read );
@@ -259,7 +259,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             revMate.substr( rBC.randTagStart, rBC.randTagLength ) +
             revMate.substr( rBC.randPrimerStart, rBC.randPrimerLength ) +
             revMate.substr( rBC.seqStart, seqTagLength ),
-            r, r );
+            r );
         read->fwd( -1, fwdMate, fwdMateQual );
         read->rev( revMinIndex, revMate.substr( rBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( rBC.seqStart, revMate.length() - rBC.seqStart ) );
         revBarcode.push( read );
@@ -275,7 +275,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
             revMate.substr( rBC.randTagStart, rBC.randTagLength ) +
             revMate.substr( rBC.randPrimerStart, rBC.randPrimerLength ) +
             revMate.substr( rBC.seqStart, seqTagLength ),
-            r, r );       
+            r );       
         read->fwd( fwdMinIndex, fwdMate.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ), fwdMateQual.substr( fBC.seqStart, fwdMate.length() - fBC.seqStart ) );
         read->rev( revMinIndex, revMate.substr( fBC.seqStart, revMate.length() - rBC.seqStart ), revMateQual.substr( fBC.seqStart, revMate.length() - rBC.seqStart ) );
         disBarcode.push( read );
@@ -312,23 +312,18 @@ void dmx::parallelDigest2() {
   fastqFeed.shrink_to_fit();
   fastqChunks.clear();
   spoon = true;
-
   // TODO these should be elsewhere...
   convertPriorityQueuesToVectors();
   groupReduce();
   convertPriorityQueuesToVectors();
-
 }
 
 void dmx::convertPriorityQueueToVector( dmxReadPriQ & q, dmxReadSerialVector & v ) {
-
   v.clear();
   dmxRead * r;
-
   while ( q.try_pop(r) ) {
     v.push_back( r );
   }
-
 }
 
 void dmx::convertPriorityQueuesToVectors() {
@@ -347,25 +342,21 @@ void dmx::convertPriorityQueuesToVectors() {
     {
       convertPriorityQueueToVector( revBarcode, revBarcodeSerVec );  
       printf( "REV %lu\n", revBarcodeSerVec.size() );
-
     }
 #pragma omp section
     {
       convertPriorityQueueToVector( conBarcode, conBarcodeSerVec );  
       printf( "CON %lu\n", conBarcodeSerVec.size() );
-
     }
 #pragma omp section
     {
       convertPriorityQueueToVector( disBarcode, disBarcodeSerVec );  
       printf( "DIS %lu\n", disBarcodeSerVec.size() );
-
     }
 #pragma omp section
     {
       convertPriorityQueueToVector( nonBarcode, nonBarcodeSerVec );  
       printf( "NON %lu\n", nonBarcodeSerVec.size() );
-
     }
   }
 }
@@ -418,7 +409,7 @@ void dmx::groupReduce( dmxReadSerialVector * drsv, dmxReadPriQ * drpq ) {
   drsv->clear();
 }
 
-inline void dmx::groupReduceFunctor::operator() ( dmxReadSerialVector * r, parallel_do_feeder< dmxReadSerialVector * >& feeder ) const {
+void dmx::groupReduceFunctor::operator() ( dmxReadSerialVector * r, parallel_do_feeder< dmxReadSerialVector * >& feeder ) const {
   
   if ( group_reduce_spoon->compare_and_swap( false, true ) ) {
     // I have the group_reduce_spoon, so I must be the feeder...
@@ -544,7 +535,7 @@ dmxRead * dmx::condenseGroup( std::vector< dmxRead * > & rv ) {
   std::string rCon = computeConsensus( rMatrix, rv.size() );
 
   // TODO modify dmxRead struct to record consensus info (reads that go into consensus, etc.)... halfway done...
-  dmxRead * r = new dmxRead( rv.front()->descriptionCode, rv.front()->tag, rv.front()->fIdx, rv.front()->rIdx ); 
+  dmxRead * r = new dmxRead( rv.front()->descriptionCode, rv.front()->tag, rv.front()->get_readID() ); 
   r->fwd( rv.front()->getFwdBCidx(), fCon );
   r->rev( rv.front()->getRevBCidx(), rCon );
   r->clusterSize = rv.size(); 
