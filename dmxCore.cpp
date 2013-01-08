@@ -281,7 +281,7 @@ void dmx::digest( barcodeStringSetIndexFinderType *_barcodeFinder, std::vector< 
         disBarcode.push( read );
       }
     }
-    (*pairIt).reset();
+    (*pairIt) = fastqPair();
   }
 }
 
