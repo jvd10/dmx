@@ -48,6 +48,19 @@ enum barcodeAssignmentType { BOTH, FWD, REV, NO_MATCH, MISMATCH } ;
 
 class dmxRead {
 
+private:
+
+  short int fBCidx;
+  short int rBCidx;
+
+  unsigned readID;
+  /* 
+   * groupSize is the number of reads that share barcode, random counter and random primer 
+   * cluster size is the size of each of the clusters (based on remaining sequence) identified
+   * in the alignment of the group and then clustered based on kmer distribution
+   */
+  uint16_t groupSize, clusterSize;
+
 public:
 
   /*
@@ -98,21 +111,9 @@ public:
   std::string tag, fSeq, rSeq;
   std::string fQual, rQual;
   barcodeAssignmentType descriptionCode;
-  /* 
-   * groupSize is the number of reads that share barcode, random counter and random primer 
-   * cluster size is the size of each of the clusters (based on remaining sequence) identified
-   * in the alignment of the group and then clustered based on kmer distribution
-   */
-  uint16_t groupSize, clusterSize;
 
   int get_readID() { return readID; }
 
-private:
-
-  short int fBCidx;
-  short int rBCidx;
-
-  unsigned readID;
 };
 
 struct dmxReadCompare {
