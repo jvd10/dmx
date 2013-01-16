@@ -78,7 +78,7 @@ using namespace tbb;
 
   
 
-class fastqPair {
+struct fastqPair {
   std::string id1, id2, sq1, sq2, ql1, ql2;
   unsigned num;
 

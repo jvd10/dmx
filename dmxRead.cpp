@@ -212,7 +212,7 @@ void dmxRead::printRFastq( unsigned i, std::ofstream & fh ) {
     << std::endl
     << rSeq 
     << std::endl << "+" << std::endl
-    << fQual
+    << rQual
     << std::endl;
 }
 
