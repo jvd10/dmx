@@ -119,8 +119,8 @@ struct Options
   addOption(parser, CommandLineOption("p",  "paired", "Files contain (some) paired-end reads.", OptionType::Boolean));
   addOption(parser, CommandLineOption("c",  "combined", "Paired-end reads contained in a single file.", OptionType::Boolean));
   addOption(parser, CommandLineOption("s",  "sorted", "Paired-end reads are in sorted order.", OptionType::Boolean));
-  addOption(parser, CommandLineOption("k",  "chunk", "Paired-end reads are in sorted order.", OptionType::Integer));
-  addOption(parser, CommandLineOption("t",  "trim", "Number of bases to trim from beginngin of all reads before barcode search.", OptionType::Integer));
+  addOption(parser, CommandLineOption("k",  "chunk", "Number of reads per chunk during parallel processing.", OptionType::Integer));
+  addOption(parser, CommandLineOption("t",  "trim", "Number of bases to trim from beginning of all reads before barcode search.", OptionType::Integer));
   addOption(parser, CommandLineOption("o",  "outputPrefix", "Prefix for all output files.", OptionType::String, options.outputPrefix));
   addOption(parser, CommandLineOption("b",  "barcodeFile", "Mandatory barcode file.", OptionType::String | OptionType::Mandatory));
 

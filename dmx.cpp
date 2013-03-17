@@ -46,8 +46,7 @@
 using namespace seqan;
 
 // Program entry point
-int main(int argc, char const ** argv)
-{
+int main( int argc, char const ** argv ) {
   // Setup command line parser.
   CommandLineParser parser;
   Options options;
@@ -57,8 +56,7 @@ int main(int argc, char const ** argv)
   // or bad parameters were given.
   int ret = parseCommandLineAndCheck(options, parser, argc, argv);
 
-  if (ret != 0)
-  {
+  if ( ret != 0 ) {
     std::cerr << "\n!!!!!!Invalid or missing arguments!!!!!!\n\nThese are the arguments that were given:" << std::endl;
     ret = mainWithOptions(options);
     return ret;

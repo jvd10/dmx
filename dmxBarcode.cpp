@@ -34,6 +34,7 @@ void barcode::loadBarcode(std::string _layout, std::string sequence) {
   
   seqStart = 39; // 29
 */
+  digestionCutSite = 0;
   parseBarcodeLayout();
 
   barcodeString = sequence.substr(barcodeStart, barcodeLength);
@@ -47,6 +48,8 @@ void barcode::loadBarcode(std::string _layout, std::string sequence) {
 }
 
 void barcode::print() {
+  printf( "digestionCutSite (%s) = %d\n", digestionCutSite == 0 ? "not enabled" : "enabled", digestionCutSite );
+
   printf( "ampPrimerStart %d ampPrimerLength %d ampPrimerString %s\n", ampPrimerStart, ampPrimerLength, ampPrimerString.c_str() );
   
   printf( "randTagStart %d randTagLength %d randTagString %s\n", randTagStart, randTagLength, randTagString.c_str() );
@@ -115,6 +118,9 @@ void barcode::set_value( char type, std::string & value, int & current_index ) {
   }
   std::istringstream ss( value );
   switch (type) {
+    case 'D':
+      ss >> digestionCutSite;
+      break;
     case 'P':
       ampPrimerStart = current_index;
       ss >> ampPrimerLength;
@@ -144,6 +150,8 @@ void barcode::set_value( char type, std::string & value, int & current_index ) {
 
 bool barcode::valid_type( char c ) {
   switch (c) {
+    case 'D':
+      break;
     case 'P':
       break;
     case 'R':

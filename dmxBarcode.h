@@ -43,6 +43,8 @@ struct barcode {
   std::string barcodeString, ampPrimerString, randPrimerString, randTagString;
   std::string barcodeStringRC, ampPrimerStringRC;
 
+  unsigned digestionCutSite;
+
   unsigned barcodeStart, ampPrimerStart, randTagStart, randPrimerStart, seqStart;
 
   unsigned barcodeLength, ampPrimerLength, randTagLength, randPrimerLength;
